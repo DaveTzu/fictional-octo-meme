@@ -18,9 +18,28 @@ document.querySelector('.rangedWeaponsBtn').addEventListener('click', loadMenuDa
 document.querySelector('.selectOther').addEventListener('change', loadMenuData)
 document.querySelector('.magicItemsBtn').addEventListener('click', loadMenuData)
 document.querySelector('.transferBtn').addEventListener('click', loadTransferMenu)
+document.querySelector('.pcInventoryTab').addEventListener('click', switchTab)
+document.querySelector('.partyInventoryTab').addEventListener('click', switchTab)
 
 let transferMenuUp = false
 let customMenuUp = false
+
+function switchTab(){
+    if (event.target.classList.contains('pcInventoryTab')) {
+        document.querySelector('.inventoryContainer-partyInventory').classList.add('tabClosed')
+        document.querySelector('.inventoryContainer-partyInventory').classList.remove('tabOpen')
+        document.querySelector('.inventoryContainer-pcInventory').classList.add('tabOpen')
+        document.querySelector('.inventoryContainer-pcInventory').classList.remove('tabClosed')
+
+
+    } else if (event.target.classList.contains('partyInventoryTab')) {
+        document.querySelector('.inventoryContainer-pcInventory').classList.add('tabClosed')
+        document.querySelector('.inventoryContainer-pcInventory').classList.remove('tabOpen')
+        document.querySelector('.inventoryContainer-partyInventory').classList.add('tabOpen')
+        document.querySelector('.inventoryContainer-partyInventory').classList.remove('tabClosed')
+    }
+}
+
 
 function check(){
     console.log('yes!')

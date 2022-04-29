@@ -46,6 +46,12 @@ nav {
   background-color: lavender;
 }
 
+.tabsContainer {
+  height: 60px;
+  background-color: lightsalmon;
+  display:flex;
+}
+
 .inventoryContainer{
   display: flex;
   flex-wrap: wrap;
@@ -55,6 +61,19 @@ nav {
   height: 900px;
   background-color: aquamarine;
   align-self: flex-start;
+}
+
+.inventoryContainer-pcInventory {
+  display: none;
+  background-color: red;
+}
+
+.tabOpen {
+  display: flex;
+}
+
+.tabClosed {
+  display: none;
 }
 
 .dropEmpty{
