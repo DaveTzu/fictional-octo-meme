@@ -24,6 +24,120 @@ document.querySelector('.partyInventoryTab').addEventListener('click', switchTab
 let transferMenuUp = false
 let customMenuUp = false
 
+function onLoadCreateInventories(){
+    for (let i = 0; i<45; i++) {
+        createItemSlot('partyInventory')
+    }
+    // for (let i = 0; i<45; i++) {
+    //     createItemSlot('pcInventory')
+    // }
+    //BEGIN PC INVENTORY MAKE
+    createItemSlot('pcInventory', 'weapon')
+    createItemSlot('pcInventory', 'none')
+    createItemSlot('pcInventory', 'head')
+    createItemSlot('pcInventory', 'neck')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+
+    createItemSlot('pcInventory', 'weapon')
+    createItemSlot('pcInventory', 'bracers')
+    createItemSlot('pcInventory', 'cloak')
+    createItemSlot('pcInventory', 'ring')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+
+    createItemSlot('pcInventory', 'weapon')
+    createItemSlot('pcInventory', 'gloves')
+    createItemSlot('pcInventory', 'armor')
+    createItemSlot('pcInventory', 'ring')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+
+    createItemSlot('pcInventory', 'ammunition')
+    createItemSlot('pcInventory', 'none')
+    createItemSlot('pcInventory', 'boots')
+    createItemSlot('pcInventory', 'none')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+
+    createItemSlot('pcInventory', 'ammunition')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'otherEquipped')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    createItemSlot('pcInventory', 'any')
+    // END PC INVENTORY MAKE
+}
+
+function createItemSlot(inventory, slotType = 'any' ){
+    let inventoryToAdd = document.querySelector(`.inventoryContainer-${inventory}`)
+    let newElement = document.createElement('div')
+    newElement.draggable = false
+    if (slotType === 'none') {
+        newElement.classList.add('slotNone')
+        newElement.classList.add('dropFull')
+        newElement.innerHTML = 'X'
+    } else {
+        newElement.classList.add('dropEmpty')
+        if ( slotType === 'any'){
+            newElement.classList.add('slotAny')
+        } else if (slotType === 'head'){
+            newElement.classList.add('slotHead')
+            newElement.innerHTML = 'HEAD<br>SLOT'
+        } else if (slotType === 'neck'){
+            newElement.classList.add('slotNeck')
+            newElement.innerHTML = 'NECK<br>SLOT'
+        } else if (slotType === 'cloak'){
+            newElement.classList.add('slotCloak')
+            newElement.innerHTML = 'CLOAK<br>SLOT'
+        } else if (slotType === 'armor'){
+            newElement.classList.add('slotArmor')
+            newElement.innerHTML = 'ARMOR<br>SLOT'
+        } else if (slotType === 'clothes'){
+            newElement.classList.add('slotClothes')
+            newElement.innerHTML = 'CLOTHES<br>SLOT'
+        } else if (slotType === 'bracers'){
+            newElement.classList.add('slotBracers')
+            newElement.innerHTML = 'BRACERS<br>SLOT'
+        } else if (slotType === 'gloves'){
+            newElement.classList.add('slotGloves')
+            newElement.innerHTML = 'GLOVES<br>SLOT'
+        } else if (slotType === 'ring'){
+            newElement.classList.add('slotRing')
+            newElement.innerHTML = 'RING<br>SLOT'
+        } else if (slotType === 'boots'){
+            newElement.classList.add('slotBoots')
+            newElement.innerHTML = 'BOOTS<br>SLOT'
+        } else if (slotType === 'ammunition'){
+            newElement.classList.add('slotAmmunition')
+            newElement.innerHTML = 'AMMUNITION<br>SLOT'
+        } else if (slotType === 'weapon'){
+            newElement.classList.add('slotWeapon')
+            newElement.innerHTML = 'WEAPON<br>SLOT'
+        } else if (slotType === 'otherEquipped'){
+            newElement.classList.add('slotEquipped')
+            newElement.innerHTML = 'OTHER<br>EQUIPPED<br>SLOT'
+        }
+
+    }
+    inventoryToAdd.append(newElement)
+}
+
 function switchTab(){
     if (event.target.classList.contains('pcInventoryTab')) {
         document.querySelector('.inventoryContainer-partyInventory').classList.add('tabClosed')
@@ -39,7 +153,6 @@ function switchTab(){
         document.querySelector('.inventoryContainer-partyInventory').classList.remove('tabClosed')
     }
 }
-
 
 function check(){
     console.log('yes!')
@@ -138,6 +251,8 @@ function getStuff() {
             }
         )
 }
+
+// ==================DRAG AND DROP SECTTION==================
 
 var dragged;
 let nextElement
@@ -255,3 +370,5 @@ let removeFromMenuPullToggle = false
         }
         
   }, false);
+
+onLoadCreateInventories()

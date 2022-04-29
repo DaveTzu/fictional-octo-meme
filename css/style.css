@@ -61,11 +61,12 @@ nav {
   height: 900px;
   background-color: aquamarine;
   align-self: flex-start;
+  overflow: auto;
 }
 
 .inventoryContainer-pcInventory {
   display: none;
-  background-color: red;
+  background-color: rgb(245, 161, 82);
 }
 
 .tabOpen {
@@ -80,9 +81,13 @@ nav {
   width: 7.5vw;
   height: 7.5vw;
   margin: 0.5vw;
-  border: 12px dashed black;
   padding: 10px;
 }
+
+.slotAny {
+  border: 12px dashed black;
+}
+
 
 .dropFull{
   width: 7.5vw;
@@ -139,6 +144,19 @@ nav {
   font-size: 1.2rem;
 }
 
+.slotHead,.slotNeck,.slotCloak,.slotArmor,.slotClothes,.slotBracers,.slotGloves,.slotRing,
+.slotBoots,.slotAmmunition,.slotWeapon,.slotEquipped {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  color: gray;
+  border: 12px dashed gray;
+  text-align: center;
+}
+
+.slotNone {
+  border: 12px dashed red;
+}
 /******************************************
 /* LAYOUT
 /*******************************************/
