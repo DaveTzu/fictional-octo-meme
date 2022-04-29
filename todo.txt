@@ -1,0 +1,7 @@
+plan nav bar at the top
+js -> dynamically populate equip item grid
+add a button to add a row to the item grid?
+plan the money panel
+get the tab system sorted for Character vs. Party Inventory
+set up correct fetches for transfer between characters
+                            custom items
