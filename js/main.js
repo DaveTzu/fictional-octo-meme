@@ -11,6 +11,59 @@
 //      click on item in inventory to add ++1 an items total
 //      track number of attuned items
 
+class PartyInventory{
+    constructor(inventoryID, startingSize){
+        this.inventoryID = inventoryID
+        this.slots = []
+
+        for (let i = 0; i < startingSize; i++) {
+            this.slots.push(new EquipSlot(i, inventoryID, 'any'))
+        }
+    }
+    addToInventory(slotNumber, x) {
+        this.slots[slotNumber].fill(x)
+    }
+    clearInventorySlot(slotNumber) {
+        this.slots[slotNumber].clear()
+    }
+    takeFromInventorySlot(slotNumber) {
+        return this.slots[slotNumber].take()
+    }
+    moveItem(fromSlot, toSlot){
+        this.slots[toSlot].fill(this.slots[fromSlot].take())
+    }
+}
+class EquipSlot{
+    constructor(slotID, inventoryID, slotType){
+        
+        this.slotID = slotID
+        this.inventoryID = inventoryID
+        this.slotType = slotType
+        this.space = null
+    }
+    fill(obj){
+        if (!this.space) {
+            this.space = obj
+        }
+    }
+    clear(){
+        if(this.space) {
+            this.space = null
+        }
+    }
+    take(){
+        if(this.space){
+            let x = this.space
+            this.space = null
+            return x
+        } else {
+            return 'THIS IS AN ERROR;  NOTHING WAS HERE TO TAKE!'
+        }
+    }
+}
+
+let partyInventory
+
 document.querySelector('.armorBtn').addEventListener('click', loadMenuData)
 document.querySelector('.gearBtn').addEventListener('click', loadMenuData)
 document.querySelector('.meleeWeaponsBtn').addEventListener('click', loadMenuData)
@@ -26,8 +79,10 @@ let customMenuUp = false
 
 function onLoadCreateInventories(){
     for (let i = 0; i<45; i++) {
-        createItemSlot('partyInventory')
+        createItemSlot('partyInventory', 'any', i)
     }
+    partyInventory = new PartyInventory('partyInventory', 45)
+
     // for (let i = 0; i<45; i++) {
     //     createItemSlot('pcInventory')
     // }
@@ -84,10 +139,11 @@ function onLoadCreateInventories(){
     // END PC INVENTORY MAKE
 }
 
-function createItemSlot(inventory, slotType = 'any' ){
+function createItemSlot(inventory, slotType = 'any', slotID = 'none'){
     let inventoryToAdd = document.querySelector(`.inventoryContainer-${inventory}`)
     let newElement = document.createElement('div')
     newElement.draggable = false
+    newElement.dataset.slotid = slotID
     if (slotType === 'none') {
         newElement.classList.add('slotNone')
         newElement.classList.add('dropFull')
@@ -306,18 +362,24 @@ let removeFromMenuPullToggle = false
 
             let draggedParent = dragged.parentNode
             let fromInventory = false
+            //
+            partyInventory.slots[event.target.dataset.slotid].fill(dragged.innerHTML)
+            console.log(partyInventory)
 
+            // dragged item started in the inventory itself
             if (draggedParent.classList.contains('dropFull')){
                 draggedParent.classList.remove('dropFull')
                 draggedParent.classList.add('dropEmpty')
                 fromInventory = true
+                partyInventory.slots[draggedParent.dataset.slotid].clear()
+
             }
             // clone element if necessary back in Menu
-          if (!removeFromMenuPullToggle) {
-            let c = dragged.cloneNode(true)
-            c.style.opacity = ""
-            draggedParent.insertBefore(c, nextElement)
-          }
+            if (!removeFromMenuPullToggle) {
+                let c = dragged.cloneNode(true)
+                c.style.opacity = ""
+                draggedParent.insertBefore(c, nextElement)
+            }
 
 
           dragged.parentNode.removeChild( dragged );
@@ -332,7 +394,7 @@ let removeFromMenuPullToggle = false
           if(fromInventory){
               draggedParent.removeChild(draggedParent.firstChild)
             }
-        }
+        }  //IF the transfer menu and the custom menu are NOT up
         if (!transferMenuUp && !customMenuUp){
             if (event.target.classList.contains("dropMenu") || event.target.classList.contains("itemInMenu")){
                 let draggedParent = dragged.parentNode
@@ -340,6 +402,7 @@ let removeFromMenuPullToggle = false
                     draggedParent.classList.remove('dropFull')
                     draggedParent.classList.add('dropEmpty')
                     fromInventory = true
+                    partyInventory.slots[draggedParent.dataset.slotid].clear()
                 }
                 if(!fromInventory){
                 dragged.parentNode.removeChild( dragged )
@@ -360,6 +423,8 @@ let removeFromMenuPullToggle = false
                 console.log(dragged)
                 console.log(draggedParent)
 
+                partyInventory.slots[draggedParent.dataset.slotid].clear()
+
                 draggedParent.classList.remove('dropFull')
                 draggedParent.classList.add('dropEmpty')
                 draggedParent.removeChild(draggedParent.firstChild)
@@ -372,3 +437,8 @@ let removeFromMenuPullToggle = false
   }, false);
 
 onLoadCreateInventories()
+
+localStorage.setItem('myDog', 'Luna')
+localStorage.setItem('myName', 'Dave')
+localStorage.setItem('myNumbers', JSON.stringify([1,2,3,4,5,6,7,8,9,10]))
+//console.log(JSON.parse(localStorage.getItem('myNumbers')))
