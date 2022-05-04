@@ -11,6 +11,7 @@
 //      click on item in inventory to add ++1 an items total
 //      track number of attuned items
 
+//#region Classes
 class PartyInventory{
     constructor(inventoryID, startingSize){
         this.inventoryID = inventoryID
@@ -60,6 +61,29 @@ class EquipSlot{
             return 'THIS IS AN ERROR;  NOTHING WAS HERE TO TAKE!'
         }
     }
+}
+class Item {
+    constructor(id, name, location, weight, type) {
+        this.id = id
+        this.name = name
+        this.location = location
+        this.weight = weight
+        this.type = type
+    }
+
+}
+
+
+//#endregion
+
+
+function getItemData(url) {
+    let apiUrl = 'https://www.dnd5eapi.co'
+    fetch(apiUrl + url)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+        })
 }
 
 let partyInventory
@@ -261,7 +285,8 @@ function loadMenuData(){
             if (!magic) {
                 for(let i = 0; i < data.equipment.length; i++) {
                     newEle = document.createElement('div')
-                    newEle.innerText = data.equipment[i].name                              
+                    newEle.innerText = data.equipment[i].name 
+                    newEle.dataset.url = data.equipment[i].url                             
                     newEle.classList.add('itemInMenu')
                     newEle.draggable = true
                     con.append(newEle)
@@ -269,7 +294,8 @@ function loadMenuData(){
             } else {
                 for(let i = 0; i < data.results.length; i++) {
                     newEle = document.createElement('div')
-                    newEle.innerText = data.results[i].name                              
+                    newEle.innerText = data.results[i].name
+                    newEle.dataset.url = data.results[i].url                              
                     newEle.classList.add('itemInMenu')
                     newEle.draggable = true
                     con.append(newEle)
@@ -307,6 +333,7 @@ function getStuff() {
             }
         )
 }
+
 
 // ==================DRAG AND DROP SECTTION==================
 
@@ -365,6 +392,7 @@ let removeFromMenuPullToggle = false
             //
             partyInventory.slots[event.target.dataset.slotid].fill(dragged.innerHTML)
             console.log(partyInventory)
+            getItemData(dragged.dataset.url)
 
             // dragged item started in the inventory itself
             if (draggedParent.classList.contains('dropFull')){
