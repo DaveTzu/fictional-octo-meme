@@ -74,20 +74,9 @@ class Item {
 }
 
 
-//#endregion
+//#endregion  
 
-
-function getItemData(url) {
-    let apiUrl = 'https://www.dnd5eapi.co'
-    fetch(apiUrl + url)
-        .then(res => res.json())
-        .then(data => {
-            console.log(data)
-        })
-}
-
-let partyInventory
-
+//#region Event Listeners
 document.querySelector('.armorBtn').addEventListener('click', loadMenuData)
 document.querySelector('.gearBtn').addEventListener('click', loadMenuData)
 document.querySelector('.meleeWeaponsBtn').addEventListener('click', loadMenuData)
@@ -98,8 +87,48 @@ document.querySelector('.transferBtn').addEventListener('click', loadTransferMen
 document.querySelector('.pcInventoryTab').addEventListener('click', switchTab)
 document.querySelector('.partyInventoryTab').addEventListener('click', switchTab)
 
+document.addEventListener("drag", dragGeneric, false);
+document.addEventListener("dragstart", dragStart, false);
+document.addEventListener("dragend", dragEnd, false);
+document.addEventListener("dragover", dragOver, false);
+document.addEventListener("dragenter", dragEnter, false);
+document.addEventListener("dragleave", dragLeave, false);
+document.addEventListener("drop", drop, false);
+
+//#endregion
+
+// #region Global Variables ** One day these will be in an object, yes?
+let partyInventory
 let transferMenuUp = false
 let customMenuUp = false
+
+var dragged;
+let nextElement
+let removeFromMenuPullToggle = false
+
+
+// #endregion
+
+//#region  Functions
+
+//#region       Testing Functions
+
+function check(){
+    console.log('yes!')
+}
+
+function getStuff() {
+    fetch('https://www.dnd5eapi.co/api/equipment/chain-shirt')
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+            }
+        )
+}
+
+//#endregion
+
+//#region       Loading Functions
 
 function onLoadCreateInventories(){
     for (let i = 0; i<45; i++) {
@@ -161,81 +190,6 @@ function onLoadCreateInventories(){
     createItemSlot('pcInventory', 'any')
     createItemSlot('pcInventory', 'any')
     // END PC INVENTORY MAKE
-}
-
-function createItemSlot(inventory, slotType = 'any', slotID = 'none'){
-    let inventoryToAdd = document.querySelector(`.inventoryContainer-${inventory}`)
-    let newElement = document.createElement('div')
-    newElement.draggable = false
-    newElement.dataset.slotid = slotID
-    if (slotType === 'none') {
-        newElement.classList.add('slotNone')
-        newElement.classList.add('dropFull')
-        newElement.innerHTML = 'X'
-    } else {
-        newElement.classList.add('dropEmpty')
-        if ( slotType === 'any'){
-            newElement.classList.add('slotAny')
-        } else if (slotType === 'head'){
-            newElement.classList.add('slotHead')
-            newElement.innerHTML = 'HEAD<br>SLOT'
-        } else if (slotType === 'neck'){
-            newElement.classList.add('slotNeck')
-            newElement.innerHTML = 'NECK<br>SLOT'
-        } else if (slotType === 'cloak'){
-            newElement.classList.add('slotCloak')
-            newElement.innerHTML = 'CLOAK<br>SLOT'
-        } else if (slotType === 'armor'){
-            newElement.classList.add('slotArmor')
-            newElement.innerHTML = 'ARMOR<br>SLOT'
-        } else if (slotType === 'clothes'){
-            newElement.classList.add('slotClothes')
-            newElement.innerHTML = 'CLOTHES<br>SLOT'
-        } else if (slotType === 'bracers'){
-            newElement.classList.add('slotBracers')
-            newElement.innerHTML = 'BRACERS<br>SLOT'
-        } else if (slotType === 'gloves'){
-            newElement.classList.add('slotGloves')
-            newElement.innerHTML = 'GLOVES<br>SLOT'
-        } else if (slotType === 'ring'){
-            newElement.classList.add('slotRing')
-            newElement.innerHTML = 'RING<br>SLOT'
-        } else if (slotType === 'boots'){
-            newElement.classList.add('slotBoots')
-            newElement.innerHTML = 'BOOTS<br>SLOT'
-        } else if (slotType === 'ammunition'){
-            newElement.classList.add('slotAmmunition')
-            newElement.innerHTML = 'AMMUNITION<br>SLOT'
-        } else if (slotType === 'weapon'){
-            newElement.classList.add('slotWeapon')
-            newElement.innerHTML = 'WEAPON<br>SLOT'
-        } else if (slotType === 'otherEquipped'){
-            newElement.classList.add('slotEquipped')
-            newElement.innerHTML = 'OTHER<br>EQUIPPED<br>SLOT'
-        }
-
-    }
-    inventoryToAdd.append(newElement)
-}
-
-function switchTab(){
-    if (event.target.classList.contains('pcInventoryTab')) {
-        document.querySelector('.inventoryContainer-partyInventory').classList.add('tabClosed')
-        document.querySelector('.inventoryContainer-partyInventory').classList.remove('tabOpen')
-        document.querySelector('.inventoryContainer-pcInventory').classList.add('tabOpen')
-        document.querySelector('.inventoryContainer-pcInventory').classList.remove('tabClosed')
-
-
-    } else if (event.target.classList.contains('partyInventoryTab')) {
-        document.querySelector('.inventoryContainer-pcInventory').classList.add('tabClosed')
-        document.querySelector('.inventoryContainer-pcInventory').classList.remove('tabOpen')
-        document.querySelector('.inventoryContainer-partyInventory').classList.add('tabOpen')
-        document.querySelector('.inventoryContainer-partyInventory').classList.remove('tabClosed')
-    }
-}
-
-function check(){
-    console.log('yes!')
 }
 
 function loadTransferMenu(){
@@ -308,6 +262,82 @@ function loadMenuData(){
     
 }
 
+
+//#endregion
+
+//#region       Other Functions
+
+function createItemSlot(inventory, slotType = 'any', slotID = 'none'){
+    let inventoryToAdd = document.querySelector(`.inventoryContainer-${inventory}`)
+    let newElement = document.createElement('div')
+    newElement.draggable = false
+    newElement.dataset.slotid = slotID
+    if (slotType === 'none') {
+        newElement.classList.add('slotNone')
+        newElement.classList.add('dropFull')
+        newElement.innerHTML = 'X'
+    } else {
+        newElement.classList.add('dropEmpty')
+        if ( slotType === 'any'){
+            newElement.classList.add('slotAny')
+        } else if (slotType === 'head'){
+            newElement.classList.add('slotHead')
+            newElement.innerHTML = 'HEAD<br>SLOT'
+        } else if (slotType === 'neck'){
+            newElement.classList.add('slotNeck')
+            newElement.innerHTML = 'NECK<br>SLOT'
+        } else if (slotType === 'cloak'){
+            newElement.classList.add('slotCloak')
+            newElement.innerHTML = 'CLOAK<br>SLOT'
+        } else if (slotType === 'armor'){
+            newElement.classList.add('slotArmor')
+            newElement.innerHTML = 'ARMOR<br>SLOT'
+        } else if (slotType === 'clothes'){
+            newElement.classList.add('slotClothes')
+            newElement.innerHTML = 'CLOTHES<br>SLOT'
+        } else if (slotType === 'bracers'){
+            newElement.classList.add('slotBracers')
+            newElement.innerHTML = 'BRACERS<br>SLOT'
+        } else if (slotType === 'gloves'){
+            newElement.classList.add('slotGloves')
+            newElement.innerHTML = 'GLOVES<br>SLOT'
+        } else if (slotType === 'ring'){
+            newElement.classList.add('slotRing')
+            newElement.innerHTML = 'RING<br>SLOT'
+        } else if (slotType === 'boots'){
+            newElement.classList.add('slotBoots')
+            newElement.innerHTML = 'BOOTS<br>SLOT'
+        } else if (slotType === 'ammunition'){
+            newElement.classList.add('slotAmmunition')
+            newElement.innerHTML = 'AMMUNITION<br>SLOT'
+        } else if (slotType === 'weapon'){
+            newElement.classList.add('slotWeapon')
+            newElement.innerHTML = 'WEAPON<br>SLOT'
+        } else if (slotType === 'otherEquipped'){
+            newElement.classList.add('slotEquipped')
+            newElement.innerHTML = 'OTHER<br>EQUIPPED<br>SLOT'
+        }
+
+    }
+    inventoryToAdd.append(newElement)
+}
+
+function switchTab(){
+    if (event.target.classList.contains('pcInventoryTab')) {
+        document.querySelector('.inventoryContainer-partyInventory').classList.add('tabClosed')
+        document.querySelector('.inventoryContainer-partyInventory').classList.remove('tabOpen')
+        document.querySelector('.inventoryContainer-pcInventory').classList.add('tabOpen')
+        document.querySelector('.inventoryContainer-pcInventory').classList.remove('tabClosed')
+
+
+    } else if (event.target.classList.contains('partyInventoryTab')) {
+        document.querySelector('.inventoryContainer-pcInventory').classList.add('tabClosed')
+        document.querySelector('.inventoryContainer-pcInventory').classList.remove('tabOpen')
+        document.querySelector('.inventoryContainer-partyInventory').classList.add('tabOpen')
+        document.querySelector('.inventoryContainer-partyInventory').classList.remove('tabClosed')
+    }
+}
+
 function clearItemsInPullMenu(){
     transferMenuUp = false
     customMenuUp = false
@@ -325,27 +355,23 @@ function clearItemsInPullMenu(){
     document.querySelector('.magicItemsBtn').style.background = ''
 }
 
-function getStuff() {
-    fetch('https://www.dnd5eapi.co/api/equipment/chain-shirt')
+function getItemData(url) {
+    let apiUrl = 'https://www.dnd5eapi.co'
+    fetch(apiUrl + url)
         .then(res => res.json())
         .then(data => {
             console.log(data)
-            }
-        )
+        })
 }
 
+//#endregion
 
-// ==================DRAG AND DROP SECTTION==================
+//#region       Drag and Drop Functions
 
-var dragged;
-let nextElement
-let removeFromMenuPullToggle = false
+function dragGeneric(){
 
-  /* events fired on the draggable target */
-  document.addEventListener("drag", function( event ) {
-  }, false);
-
-  document.addEventListener("dragstart", function( event ) {
+}
+function dragStart(event){
       // store a ref. on the dragged elem
       dragged = event.target;
       draggedText = event.target
@@ -353,116 +379,113 @@ let removeFromMenuPullToggle = false
       nextElement = dragged.nextElementSibling
       // make it half transparent
       event.target.style.opacity = .5;
-  }, false);
-
-  document.addEventListener("dragend", function( event ) {
-      event.target.style.opacity = "";
-  }, false);
-
-  /* events fired on the drop targets */
-  document.addEventListener("dragover", function( event ) {
-      // prevent default to allow drop
-      event.preventDefault();
-  }, false);
-
-  document.addEventListener("dragenter", function( event ) {
-      // highlight potential drop target when the draggable element enters it
-      if ( event.target.className == "dropEmpty" ) {
-          event.target.style.background = "purple";
-      }
-
-  }, false);
-
-  document.addEventListener("dragleave", function( event ) {
-      // reset background of potential drop target when the draggable element leaves it
-      if ( event.target.className == "dropEmpty" ) {
+}
+function dragEnd(event){
+    event.target.style.opacity = "";
+}
+function dragEnter(event){
+    if ( event.target.classList.contains('dropEmpty')) {
+        event.target.style.background = "purple";
+    }
+}
+function dragLeave(event) {
+ // reset background of potential drop target when the draggable element leaves it
+ if ( event.target.classList.contains("dropEmpty")) {
+    event.target.style.background = "";
+}
+}
+function dragOver(event){
+    /* events fired on the drop targets */
+    event.preventDefault();
+}
+function drop(event){
+    event.preventDefault();
+    // dropped element over an empty inventory slot
+    if ( event.target.classList.contains("dropEmpty")) {
           event.target.style.background = "";
-      }
 
-  }, false);
+          let draggedParent = dragged.parentNode
+          let fromInventory = false
+          //
+          partyInventory.slots[event.target.dataset.slotid].fill(dragged.innerHTML)
+          console.log(partyInventory)
+          getItemData(dragged.dataset.url)
 
-  document.addEventListener("drop", function( event ) {
-      event.preventDefault();
-      // dropped element over an empty inventory slot
-      if ( event.target.classList.contains("dropEmpty")) {
-            event.target.style.background = "";
+          // dragged item started in the inventory itself
+          if (draggedParent.classList.contains('dropFull')){
+              draggedParent.classList.remove('dropFull')
+              draggedParent.classList.add('dropEmpty')
+              fromInventory = true
+              partyInventory.slots[draggedParent.dataset.slotid].clear()
 
-            let draggedParent = dragged.parentNode
-            let fromInventory = false
-            //
-            partyInventory.slots[event.target.dataset.slotid].fill(dragged.innerHTML)
-            console.log(partyInventory)
-            getItemData(dragged.dataset.url)
-
-            // dragged item started in the inventory itself
-            if (draggedParent.classList.contains('dropFull')){
-                draggedParent.classList.remove('dropFull')
-                draggedParent.classList.add('dropEmpty')
-                fromInventory = true
-                partyInventory.slots[draggedParent.dataset.slotid].clear()
-
-            }
-            // clone element if necessary back in Menu
-            if (!removeFromMenuPullToggle) {
-                let c = dragged.cloneNode(true)
-                c.style.opacity = ""
-                draggedParent.insertBefore(c, nextElement)
-            }
+          }
+          // clone element if necessary back in Menu
+          if (!removeFromMenuPullToggle) {
+              let c = dragged.cloneNode(true)
+              c.style.opacity = ""
+              draggedParent.insertBefore(c, nextElement)
+          }
 
 
-          dragged.parentNode.removeChild( dragged );
-          event.target.appendChild( dragged );
-          
-          dragged.classList.remove('itemInMenu')
-          dragged.classList.add('itemInInventory')
-          
-          event.target.classList.remove('dropEmpty')
-          event.target.classList.add('dropFull')
+        dragged.parentNode.removeChild( dragged );
+        event.target.appendChild( dragged );
+        
+        dragged.classList.remove('itemInMenu')
+        dragged.classList.add('itemInInventory')
+        
+        event.target.classList.remove('dropEmpty')
+        event.target.classList.add('dropFull')
 
-          if(fromInventory){
+        if(fromInventory){
+            draggedParent.removeChild(draggedParent.firstChild)
+          }
+    }  //IF the transfer menu and the custom menu are NOT up
+      if (!transferMenuUp && !customMenuUp){
+          if (event.target.classList.contains("dropMenu") || event.target.classList.contains("itemInMenu")){
+              let draggedParent = dragged.parentNode
+              if (draggedParent.classList.contains('dropFull')){
+                  draggedParent.classList.remove('dropFull')
+                  draggedParent.classList.add('dropEmpty')
+                  fromInventory = true
+                  partyInventory.slots[draggedParent.dataset.slotid].clear()
+              }
+              if(!fromInventory){
+              dragged.parentNode.removeChild( dragged )
+                  if (!removeFromMenuPullToggle) {
+                      let c = dragged.cloneNode(true)
+                      c.style.opacity = ""
+                      draggedParent.insertBefore(c, nextElement)
+                  }
+              } 
+              if(fromInventory){
+                  draggedParent.removeChild(draggedParent.firstChild)
+              }
+  
+          }
+      } else if (transferMenuUp || customMenuUp){
+          if (event.target.classList.contains("dropMenu") || event.target.classList.contains("itemInMenu") || event.target.classList.contains("pullMenuContainer")){
+              let draggedParent = dragged.parentNode
+              console.log(dragged)
+              console.log(draggedParent)
+
+              partyInventory.slots[draggedParent.dataset.slotid].clear()
+
+              draggedParent.classList.remove('dropFull')
+              draggedParent.classList.add('dropEmpty')
               draggedParent.removeChild(draggedParent.firstChild)
-            }
-        }  //IF the transfer menu and the custom menu are NOT up
-        if (!transferMenuUp && !customMenuUp){
-            if (event.target.classList.contains("dropMenu") || event.target.classList.contains("itemInMenu")){
-                let draggedParent = dragged.parentNode
-                if (draggedParent.classList.contains('dropFull')){
-                    draggedParent.classList.remove('dropFull')
-                    draggedParent.classList.add('dropEmpty')
-                    fromInventory = true
-                    partyInventory.slots[draggedParent.dataset.slotid].clear()
-                }
-                if(!fromInventory){
-                dragged.parentNode.removeChild( dragged )
-                    if (!removeFromMenuPullToggle) {
-                        let c = dragged.cloneNode(true)
-                        c.style.opacity = ""
-                        draggedParent.insertBefore(c, nextElement)
-                    }
-                } 
-                if(fromInventory){
-                    draggedParent.removeChild(draggedParent.firstChild)
-                }
-    
-            }
-        } else if (transferMenuUp || customMenuUp){
-            if (event.target.classList.contains("dropMenu") || event.target.classList.contains("itemInMenu") || event.target.classList.contains("pullMenuContainer")){
-                let draggedParent = dragged.parentNode
-                console.log(dragged)
-                console.log(draggedParent)
-
-                partyInventory.slots[draggedParent.dataset.slotid].clear()
-
-                draggedParent.classList.remove('dropFull')
-                draggedParent.classList.add('dropEmpty')
-                draggedParent.removeChild(draggedParent.firstChild)
-                dragged.classList.remove('itemInInventory')
-                dragged.classList.add('itemInMenu')
-                document.querySelector('.itemsToPullContainer').appendChild(dragged)
+              dragged.classList.remove('itemInInventory')
+              dragged.classList.add('itemInMenu')
+              document.querySelector('.itemsToPullContainer').appendChild(dragged)
             }
         }
-        
-  }, false);
+      
+}
+
+//#endregion
+
+
+//#endregion
+
 
 onLoadCreateInventories()
 
